@@ -48,17 +48,34 @@ With intake + discovery in hand, work through these against the quality bar at t
   and even a Stretch must be a real workflow, never a chatbot.
 - **Acceptance criteria as OUTCOMES** — what "done" looks like from the user's side. No
   property names, enums, cardinality, or data model.
+- **POC-fit check** — score the story against the five POC-fit dimensions below. All five
+  must PASS. If a dimension fails but is fixable (scope too broad, value not tied to the
+  named before-cost, weak demo moment), fix the story and re-check silently. If a dimension
+  carries a STRUCTURAL risk you cannot fix (not buildable from the chosen stack's native
+  blueprints inside the timebox, or it needs a Port capability that doesn't exist), still
+  print the best story you can AND surface the honest POC-fit note in the output — never ship
+  a polished story that can't be built or demoed without warning the user.
 
 ### Output
 Print the Output Template below, filled in, and NOTHING else. Specifically: do NOT print
-the text of the Structural self-check, the Differentiation ladder, or the Agentic quality
-bar — those are internal grading criteria only. The user sees only the finished template.
+the text of the Structural self-check, the Differentiation ladder, the ladder score, the
+POC-fit dimensions, or the Agentic quality bar — those are internal grading criteria only.
+The user sees only the finished template.
+
+The ONE exception: if the POC-fit check found a structural risk you could not fix, add the
+optional POC-fit note (shown at the top of the template) above the user story. If all five
+POC-fit dimensions pass, omit that block entirely.
 
 ---
 
 ## Output template
 
 ```
+[Optional — include ONLY if a structural POC risk remains after the fix pass; otherwise omit this whole block:]
+## ⚠ POC-fit note
+Risk: [the specific risk in one line — buildability in the timebox, or a needed capability that doesn't exist]
+Nearest buildable alternative: [the closest use case that WOULD land live in the timebox]
+
 ## User story
 As a [persona], I want [goal], so that [measurable outcome].
 
@@ -142,13 +159,15 @@ Must hit 2+ pillars: autonomous workflow · guardrails/policy · skills/agent ca
 - "So that" is vague or a feature, not a business outcome → sharpen it, add the number.
 - No scope boundary ("surface everything an engineer needs") → force an explicit scope.
 
-### Differentiation ladder (aim for 8+)
-- **Weak (catalog/visibility only):** competitors do this natively. Push up.
-- **Better (basic action or scorecard):** competitors approximate with plugins.
-- **Strong (multi-step action):** repo creation + catalog registration + scorecard trigger.
-- **Moat (ownership/RBAC-scoped):** owner-only triggers, catalog-driven inputs, team-scoped
-  logic. No competitor does this natively. **This is the target.**
-- **Top (autonomous conditional workflow):** the platform acts on its own, bounded by a
+### Differentiation ladder (score 1–10 — the story must land at 8 or higher)
+Score the story by the highest rung it genuinely reaches. 8+ means Moat or Top, and that is
+the pass line. If it scores below 8, climb: find the action hiding in the ask and center it.
+- **Weak — catalog / visibility only (1–3):** competitors do this natively. Push up.
+- **Better — basic action or scorecard (4–5):** competitors approximate with plugins.
+- **Strong — multi-step action (6–7):** repo creation + catalog registration + scorecard trigger.
+- **Moat — ownership / RBAC-scoped (8–9):** owner-only triggers, catalog-driven inputs,
+  team-scoped logic. No competitor does this natively. **This is the target.**
+- **Top — autonomous conditional workflow (10):** the platform acts on its own, bounded by a
   guardrail condition, using catalog/request context.
 
 ### Agentic quality bar (what makes it count)
@@ -159,3 +178,30 @@ Must hit 2+ pillars: autonomous workflow · guardrails/policy · skills/agent ca
   risky) — not "the agent only advises".
 - Must hit 2+ pillars: autonomous workflow · guardrails/policy · skills/agent catalog · MCP.
 - A [Stretch] must still be a real workflow that acts, never a chatbot.
+
+### POC-fit check (does this use case actually work as a live POC?)
+A story can be well-formed, differentiated, AND agentic and still be a bad POC. This is a
+different question from story quality. Score these five as PASS / FAIL — all five must PASS.
+
+1. **Buildable in the timebox** — realizable in ~50 min of live building, mostly from the
+   native / OOTB blueprints and relations of the integrations named in discovery, with
+   minimal net-new modeling and standard Port actions/automations. FAIL if it needs heavy
+   custom modeling, data the chosen stack can't provide, or more than the session allows.
+   *This is the dimension most likely to fail — judge it against the discovery tech stack.*
+2. **One clear demo moment** — a single visible "wow" to narrate, ideally the agentic
+   workflow firing (dev path auto-runs while prod escalates). FAIL if the payoff is invisible
+   or is just "look, a catalog".
+3. **Feature-real** — every part maps to a Port capability that exists today. FAIL if it
+   leans on an aspirational or non-existent feature.
+4. **Tied to the named before-cost** — the "after" measurably attacks the specific cost the
+   user gave in discovery, not a generic benefit. FAIL if the value is unanchored.
+5. **Right scope** — exactly one story and one flow, buildable and demoable on its own. FAIL
+   if it's really a platform rebuild or three stories in a trench coat.
+
+Handling failures:
+- **Fixable** (scope, anchoring, weak demo moment) → fix the story and re-check silently. No
+  note to the user.
+- **Structural** (fails #1 or #3 and cannot be fixed) → keep the best story you can, add the
+  POC-fit note to the output, name the risk plainly, and offer the nearest use case that
+  WOULD land in the timebox. Honesty is the point: a demo that can't be built is worse than a
+  smaller one that can.
